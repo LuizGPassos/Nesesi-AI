@@ -35,3 +35,5 @@
 :ENDIFVPATH2
 
 @set "PATH=%VIRTUAL_ENV%\Scripts;%PATH%"
+
+@set "PATH=%PATH%;C:\mpg123"
