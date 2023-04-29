@@ -4,8 +4,10 @@ import wave
 import os
 import keyboard
 
-API_KEY = ''
-openai.api_key = API_KEY
+def load_api_key(filename):
+    with open(filename, 'r') as file:
+        return file.read().strip()
+openai.api_key = load_api_key('apikey.txt')
 model_id = 'gpt-4'
 
 def gravar_audio(nome_arquivo):
