@@ -4,7 +4,7 @@ import wave
 import os
 import keyboard
 
-API_KEY = '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'
+API_KEY = ''
 openai.api_key = API_KEY
 model_id = 'gpt-4'
 
