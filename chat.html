@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Nesesi AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1 id="tituloAI">NESESI AI</h1>
+        <nav>
+            <a href="index.html">HOME</a>
+            <a href="howitworks.html">COMO FUNCIONA</a>
+            <a href="about.html">SOBRE</a>
+            <a href="chat.html">CHAT</a>
+        </nav>
+    </header>
+    <div id="alpha">
+        <h2 id="alphaTitulo">IMPORTANTE:</h2>
+        <p id="alphaInfo">Peço que leiam tudo, pois o uso errado desta plataforma pode me gerar prejuizos. Esse é um teste em alpha da plataforma e AI Nesesi. O funcionamento é bem simples, escreva o que deseja falar para a AI e clique em enviar. Você verá seu prompt e abaixo de seu prompt, verá a resposta da AI. Caso prefira, clique e segure o botão "Mic" e use seu microfone para informar o prompt. Ainda há alguns problemas no input do microfone, por exemplo, caso use 2 linguas diferentes (Como por exemplo PT e JP) na mesma frase, muito provávelmente só será reconhecido um dos dois idiomas. O tempo de resposta pode demorar alguns segundos, e caso use a opção de gravação de voz, pode demorar um pouco mais. Peço que usem o bom senso pois a AI está em processo de aprendizado e qualquer prompt "errado" pode influenciar nos próximos passos da AI. Também peço que utilizem moderadamente pois o uso da API é cobrado diretamente da minha conta Paypal(Mas, por favor não deixem de usar por conta disso, eu preciso muito do feedback de vocês. Cada prompt é mais ou menos 0,02 dolares, mas por favor evitem usar muito, e caso queiram usar o que vocês jugarem que sejam muitos prompts, por favor me avisem.) No mais, divirtam-se!</p>
+        </div>
+    <h2 id="chatTitulo">Chat - Nesesi AI</h2>
+    <textarea id="promptInput" cols="30" rows="10"></textarea>
+    <button id="promptsdBtn">Enviar</button> 
+    <button id="recordBtn">Mic</button>
+    <p id="micInfo">Pressione e segure</p>
+    <h3>Você: </h3>
+    <p id="speechtotextStr">Teste você</p>
+    <h3>Nesesi: </h3>
+    <p id="AIresp">Teste Nesesi</p>
+    
+    <script src="app.js"></script>
+    <footer>
+        <p>Steps todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
