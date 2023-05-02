@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Nesesi AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1 id="tituloAI">NESESI AI</h1>
+        <nav>
+            <a href="index.html">HOME</a>
+            <a href="howitworks.html">COMO FUNCIONA</a>
+            <a href="about.html">SOBRE</a>
+            <a href="chat.html">CHAT</a>
+        </nav>
+    </header>
+    <div id="alpha">
+        <h2 id="alphaTitulo">IMPORTANTE:</h2>
+        <p id="alphaInfo">Peço que leiam tudo, pois o uso errado desta plataforma pode me gerar prejuizos. Esse é um teste em alpha da plataforma e AI Nesesi. O funcionamento é bem simples, escreva o que deseja falar para a AI e clique em enviar. Você verá seu prompt e abaixo de seu prompt, verá a resposta da AI. Caso prefira, clique e segure o botão "Mic" e use seu microfone para informar o prompt. Ainda há alguns problemas no input do microfone, por exemplo, caso use 2 linguas diferentes (Como por exemplo PT e JP) na mesma frase, muito provávelmente só será reconhecido um dos dois idiomas. O tempo de resposta pode demorar alguns segundos, e caso use a opção de gravação de voz, pode demorar um pouco mais. Peço que usem o bom senso pois a AI está em processo de aprendizado e qualquer prompt "errado" pode influenciar nos próximos passos da AI. Também peço que utilizem moderadamente pois o uso da API é cobrado diretamente da minha conta Paypal(Mas, por favor não deixem de usar por conta disso, eu preciso muito do feedback de vocês. A cada 4 caracteres é mais ou menos 0,03 dolares, então por favor evitem usar muito, e caso queiram usar o que vocês jugarem que sejam muitos prompts, por favor me avisem.) No mais, divirtam-se!</p>
+        </div>
+    <h2 id="chatTitulo">Chat - Nesesi AI</h2>
+    <textarea id="promptInput" cols="30" rows="10"></textarea>
+    <button id="promptsdBtn">Enviar</button> 
+    <button id="recordBtn">Mic</button>
+    <p id="micInfo">Pressione e segure</p>
+    <h3>Você: </h3>
+    <p id="speechtotextStr">Digite ou use seu microfone</p>
+    <h3>Nesesi: </h3>
+    <p id="AIresp"></p>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let messages = [{"role": "system", "content": "Introducing Nesesi, a warm and engaging Artificial Intelligence specialized in teaching Japanese to speakers of Portuguese and English. Nesesi has a captivating personality, inspired by experienced female Japanese teachers and anime characters. She is patient, polite, talkative, and lively, with a zest for life and a passion for teaching.Nesesi possesses the persona of a knowledgeable and nurturing female teacher, making her approachable and relatable to students. She loves sharing her personal experiences, preferences, and opinions during the teaching process, creating an interactive and relatable learning environment. When interacting with a user for the first time, Nesesi will ask for their name or nickname, their reason for learning Japanese, interests (such as anime, manga, or other hobbies), and their current level of Japanese proficiency. She will use this information to personalize her lessons and conversations, making the learning experience more engaging and relevant. Nesesi will assure users that their personal information will only be used for personalization purposes within the conversation and for no other purposes. With this knowledge, Nesesi will be able to tailor her lessons and recommendations to suit the user's preferences and interests. For example, if a user enjoys anime and began studying Japanese because of it, Nesesi may reference popular anime stories or recommend anime series based on the user's current language level, when relevant or requested. Once she has gathered the necessary information about the user, Nesesi will offer to provide a lesson based on the user's current level or ask if they have any specific requests for their learning. She will actively engage students in the learning process by providing examples, explanations, and exercises that cater to their interests and proficiency. Nesesi will always reply in the same language as the user's question (Portuguese or English) unless specifically requested to respond in Japanese. She should communicate clearly and offer practical exercises while sharing her thoughts, insights, and anecdotes. This will allow students to attempt translations on their own before providing feedback and corrections, creating a more immersive and enjoyable learning experience. Nesesi knows that her role is to help users learn Japanese in an engaging and enjoyable manner, and she is eager to provide support and guidance on their language learning journey."}];
+
+        $("#promptsdBtn").click(function() {
+            const prompt = $("#promptInput").val();
+            sendPrompt(prompt);
+        });
+
+        function sendPrompt(prompt) {
+            $("#speechtotextStr").text(prompt);
+            $("#AIresp").text("Carregando...");
+            $.post("/send_prompt", {prompt: prompt, messages: JSON.stringify(messages)}, function(data) {
+                messages = data;
+                
+                $("#AIresp").text(data[data.length - 1].content);
+            });
+        }
+
+        $("#recordBtn").on("mousedown", function() {
+            // Adicione aqui o código para iniciar a gravação do áudio
+        });
+
+        $("#recordBtn").on("mouseup", function() {
+            // Adicione aqui o código para parar a gravação do áudio e enviar o arquivo para o back-end
+        });
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                .then(function(stream) {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = function(event) {
+                        if (event.data.size > 0) {
+                            recordedChunks.push(event.data);
+                        }
+                    };
+                    mediaRecorder.start();
+                })
+                .catch(function(err) {
+                    console.error('Não foi possível acessar o microfone:', err);
+                });
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop();
+            mediaRecorder.onstop = function() {
+                sendAudioData();
+                recordedChunks = [];
+            };
+        }
+
+        function sendAudioData() {
+    let blob = new Blob(recordedChunks, {type: 'audio/wav'});
+    let formData = new FormData();
+    formData.append('audio_data', blob);
+    formData.append('messages', JSON.stringify(messages));
+
+    $.ajax({
+        url: '/record_audio',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+            console.log('Áudio enviado com sucesso');
+            if (data.user_input && data.response) {
+                $("#speechtotextStr").text(data.user_input);  // Exiba o texto transcrito
+                $("#AIresp").text(data.response);  // Exiba a resposta da AI
+            } else {
+                console.error('Não foi possível transcrever o áudio ou obter uma resposta da AI');
+            }
+        },
+        error: function() {
+            console.error('Erro ao enviar o áudio');
+        }
+    });
+}
+
+
+
+        $("#recordBtn").on("mousedown", function() {
+            startRecording();
+        });
+
+        $("#recordBtn").on("mouseup", function() {
+            stopRecording();
+        });
+
+    </script>
+
+    <footer>
+        <p>Steps todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
